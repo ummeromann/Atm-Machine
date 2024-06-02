@@ -1,0 +1,75 @@
+import inquirer from "inquirer";
+
+interface UserAnswers{
+    userID: string;
+    userPIN: number;
+    accountType: string;
+    transactionType: string;
+    amount:number
+}
+
+async function startATMConversation(){
+    console.log("welcome to Islamic Bank!");
+    
+
+
+const answers: UserAnswers = await inquirer.prompt([
+    {
+        type: "input",
+        name: "userID",
+        message: "kindly enter your user ID:"
+    },
+    {
+        type: "number",
+        name: "userPIN",
+        message: "kindly enter your PIN:"
+    },
+    {
+        type: "list",
+        name: "accountType",
+        choices: ["Current ", "Saving "],
+        message: "Select your account type:"
+    },
+    {
+        type: "list",
+        name: "transactionType",
+        choices: ["Fastcash withdrawal", "Normal withdrawal"],
+        message: "Select your transactionType:",
+    },
+    {
+        type: "list",
+        name: "amount",
+        choices: [1000, 2000, 5000, 10000, 20000],
+        message: "Select your amount:",
+        when(answers){
+            return answers.transactionType === "Fastcash withdrawal";
+        }
+    },
+    {
+        type: "number",
+        name: "amount",
+        message: "Enter your amount:",
+        when(answers){
+            return answers.transactionType === "Normal withdrawal";
+        }
+    },
+]);
+
+if(answers.userID && answers.userPIN){
+    console.log("processing your request...");
+    const balance = Math.floor(Math.random()*100000000);
+    console.log("Your current balance is: PKR", balance.toLocaleString());
+    const enteredAmount = answers.amount;
+
+    if(balance >= enteredAmount){
+        const remainingBalance = balance - enteredAmount;
+        console.log("transaction is successfull. your remaining balance is: PKR",
+        remainingBalance.toLocaleString());
+    } else {
+        console.log("Insufficient balance. Please try again with a lower amount.");
+    }
+}
+
+}
+
+startATMConversation();
